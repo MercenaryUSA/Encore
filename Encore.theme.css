@@ -1,0 +1,1530 @@
+/**
+ * @name Encore
+ * @author Mercenary
+ * @version 1.0.0
+ * @description A Spotify-inspired dark theme: near-black surfaces, that signature green, pill-shaped controls, a playlist-style gradient header, drifting ambient glow and soft, floaty animations everywhere. Uses Figtree.
+ */
+
+/* Fonts (imports must stay at the top of the file).
+   Google Fonts first; jsdelivr serves the same fonts as a fallback. */
+@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import url("https://cdn.jsdelivr.net/npm/@fontsource-variable/figtree@5/index.css");
+@import url("https://cdn.jsdelivr.net/npm/@fontsource-variable/jetbrains-mono@5/index.css");
+
+/* =========================================================================
+   1. KNOBS: change these to restyle the whole theme
+   ========================================================================= */
+:root {
+    /* Fonts */
+    --sp-font: "Figtree", "Figtree Variable", "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --sp-font-code: "JetBrains Mono", "JetBrains Mono Variable", "gg mono", Consolas, "Courier New", monospace;
+
+    /* Accent: the green, plus a teal used in gradients */
+    --sp-green: #1ed760;
+    --sp-green-hsl: 141 73% 48%;
+    --sp-green-strong: #1db954;
+    --sp-green-bright: #3be477;
+    --sp-teal: #1ab3a6;
+    --sp-on-green: #000000;
+    /* text on green buttons */
+    --sp-green-soft: color-mix(in oklab, var(--sp-green) 16%, transparent);
+    --sp-green-softer: color-mix(in oklab, var(--sp-green) 8%, transparent);
+
+    /* Surfaces, darkest -> lightest */
+    --sp-bg-0: #000000;
+    /* app frame / server bar */
+    --sp-bg-1: #121212;
+    /* chat */
+    --sp-bg-2: #0f0f0f;
+    /* channel sidebar */
+    --sp-surface-1: #181818;
+    --sp-surface-2: #1f1f1f;
+    --sp-surface-3: #282828;
+    --sp-surface-4: #333333;
+
+    /* Text */
+    --sp-text-strong: #ffffff;
+    --sp-text: #e4e4e4;
+    --sp-text-muted: #b3b3b3;
+    --sp-text-subtle: #7a7a7a;
+    --sp-link: #4fe38a;
+
+    /* Lines */
+    --sp-line-1: rgb(255 255 255 / 0.04);
+    --sp-line-2: rgb(255 255 255 / 0.08);
+    --sp-line-3: rgb(255 255 255 / 0.14);
+
+    /* Shape */
+    --sp-radius-sm: 6px;
+    --sp-radius-md: 10px;
+    --sp-radius-lg: 14px;
+    --sp-pill: 999px;
+
+    /* Motion */
+    --sp-ease: cubic-bezier(0.22, 0.8, 0.24, 1);
+    --sp-ease-float: cubic-bezier(0.33, 1.25, 0.55, 1);
+    /* gentle overshoot */
+    --sp-ease-spring: cubic-bezier(0.34, 1.45, 0.64, 1);
+    --sp-fast: 160ms;
+    --sp-med: 280ms;
+    --sp-slow: 460ms;
+    --sp-ambient-speed: 60s;
+    /* drifting background glow; set to 0s to stop it */
+    --sp-bob-speed: 6s;
+    /* idle floating of panels and badges */
+
+    /* Header gradient (the "playlist" wash at the top of the chat) */
+    --sp-header-wash: color-mix(in oklab, var(--sp-green-strong) 22%, transparent);
+    --sp-header-height: 260px;
+
+    /* Elevation */
+    --sp-glass: color-mix(in oklab, var(--sp-surface-3) 82%, transparent);
+    --sp-blur: blur(22px) saturate(1.4);
+    --sp-edge: inset 0 1px 0 rgb(255 255 255 / 0.06);
+    --sp-shadow: 0 16px 40px -8px rgb(0 0 0 / 0.75), 0 2px 6px rgb(0 0 0 / 0.4);
+    --sp-shadow-float: 0 22px 48px -10px rgb(0 0 0 / 0.85), 0 4px 12px rgb(0 0 0 / 0.45);
+    --sp-glow: 0 8px 26px -6px color-mix(in oklab, var(--sp-green) 55%, transparent);
+}
+
+/* =========================================================================
+   2. BASE PALETTE
+   Discord builds every colour (buttons, selected rows, highlights,
+   toggles...) from these scales. Recolouring them themes the places
+   that have no token of their own.
+   ========================================================================= */
+:root {
+    /* neutral scale: pure, untinted greys */
+    --neutral-1-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --neutral-2-hsl: 0 calc(var(--saturation-factor, 1)*0%) 98.4%;
+    --neutral-3-hsl: 0 calc(var(--saturation-factor, 1)*0%) 97.1%;
+    --neutral-4-hsl: 0 calc(var(--saturation-factor, 1)*0%) 95.5%;
+    --neutral-5-hsl: 0 calc(var(--saturation-factor, 1)*0%) 94.1%;
+    --neutral-6-hsl: 0 calc(var(--saturation-factor, 1)*0%) 92.5%;
+    --neutral-7-hsl: 0 calc(var(--saturation-factor, 1)*0%) 91.4%;
+    --neutral-8-hsl: 0 calc(var(--saturation-factor, 1)*0%) 89.8%;
+    --neutral-9-hsl: 0 calc(var(--saturation-factor, 1)*0%) 88.4%;
+    --neutral-10-hsl: 0 calc(var(--saturation-factor, 1)*0%) 86.9%;
+    --neutral-11-hsl: 0 calc(var(--saturation-factor, 1)*0%) 85.5%;
+    --neutral-12-hsl: 0 calc(var(--saturation-factor, 1)*0%) 83.9%;
+    --neutral-13-hsl: 0 calc(var(--saturation-factor, 1)*0%) 82.7%;
+    --neutral-14-hsl: 0 calc(var(--saturation-factor, 1)*0%) 81.2%;
+    --neutral-15-hsl: 0 calc(var(--saturation-factor, 1)*0%) 79.8%;
+    --neutral-16-hsl: 0 calc(var(--saturation-factor, 1)*0%) 78.2%;
+    --neutral-17-hsl: 0 calc(var(--saturation-factor, 1)*0%) 77.1%;
+    --neutral-18-hsl: 0 calc(var(--saturation-factor, 1)*0%) 75.5%;
+    --neutral-19-hsl: 0 calc(var(--saturation-factor, 1)*0%) 74.1%;
+    --neutral-20-hsl: 0 calc(var(--saturation-factor, 1)*0%) 72.5%;
+    --neutral-21-hsl: 0 calc(var(--saturation-factor, 1)*0%) 71.4%;
+    --neutral-22-hsl: 0 calc(var(--saturation-factor, 1)*0%) 70%;
+    --neutral-23-hsl: 0 calc(var(--saturation-factor, 1)*0%) 68.4%;
+    --neutral-24-hsl: 0 calc(var(--saturation-factor, 1)*0%) 67.3%;
+    --neutral-25-hsl: 0 calc(var(--saturation-factor, 1)*0%) 65.7%;
+    --neutral-26-hsl: 0 calc(var(--saturation-factor, 1)*0%) 64.3%;
+    --neutral-27-hsl: 0 calc(var(--saturation-factor, 1)*0%) 63.1%;
+    --neutral-28-hsl: 0 calc(var(--saturation-factor, 1)*0%) 61.6%;
+    --neutral-29-hsl: 0 calc(var(--saturation-factor, 1)*0%) 60.4%;
+    --neutral-30-hsl: 0 calc(var(--saturation-factor, 1)*0%) 59%;
+    --neutral-31-hsl: 0 calc(var(--saturation-factor, 1)*0%) 57.6%;
+    --neutral-32-hsl: 0 calc(var(--saturation-factor, 1)*0%) 56.3%;
+    --neutral-33-hsl: 0 calc(var(--saturation-factor, 1)*0%) 55.1%;
+    --neutral-34-hsl: 0 calc(var(--saturation-factor, 1)*0%) 53.5%;
+    --neutral-35-hsl: 0 calc(var(--saturation-factor, 1)*0%) 52.4%;
+    --neutral-36-hsl: 0 calc(var(--saturation-factor, 1)*0%) 51%;
+    --neutral-37-hsl: 0 calc(var(--saturation-factor, 1)*0%) 49.6%;
+    --neutral-38-hsl: 0 calc(var(--saturation-factor, 1)*0%) 48.2%;
+    --neutral-39-hsl: 0 calc(var(--saturation-factor, 1)*0%) 47.1%;
+    --neutral-40-hsl: 0 calc(var(--saturation-factor, 1)*0%) 45.9%;
+    --neutral-41-hsl: 0 calc(var(--saturation-factor, 1)*0%) 44.2%;
+    --neutral-42-hsl: 0 calc(var(--saturation-factor, 1)*0%) 42.9%;
+    --neutral-43-hsl: 0 calc(var(--saturation-factor, 1)*0%) 41.7%;
+    --neutral-44-hsl: 0 calc(var(--saturation-factor, 1)*0%) 40.2%;
+    --neutral-45-hsl: 0 calc(var(--saturation-factor, 1)*0%) 39%;
+    --neutral-46-hsl: 0 calc(var(--saturation-factor, 1)*0%) 37.7%;
+    --neutral-47-hsl: 0 calc(var(--saturation-factor, 1)*0%) 36.3%;
+    --neutral-48-hsl: 0 calc(var(--saturation-factor, 1)*0%) 34.8%;
+    --neutral-49-hsl: 0 calc(var(--saturation-factor, 1)*0%) 33.6%;
+    --neutral-50-hsl: 0 calc(var(--saturation-factor, 1)*0%) 32.4%;
+    --neutral-51-hsl: 0 calc(var(--saturation-factor, 1)*0%) 31.5%;
+    --neutral-52-hsl: 0 calc(var(--saturation-factor, 1)*0%) 30.9%;
+    --neutral-53-hsl: 0 calc(var(--saturation-factor, 1)*0%) 30.2%;
+    --neutral-54-hsl: 0 calc(var(--saturation-factor, 1)*0%) 29.6%;
+    --neutral-55-hsl: 0 calc(var(--saturation-factor, 1)*0%) 28.8%;
+    --neutral-56-hsl: 0 calc(var(--saturation-factor, 1)*0%) 28.1%;
+    --neutral-57-hsl: 0 calc(var(--saturation-factor, 1)*0%) 27.3%;
+    --neutral-58-hsl: 0 calc(var(--saturation-factor, 1)*0%) 26.9%;
+    --neutral-59-hsl: 0 calc(var(--saturation-factor, 1)*0%) 26%;
+    --neutral-60-hsl: 0 calc(var(--saturation-factor, 1)*0%) 25.2%;
+    --neutral-61-hsl: 0 calc(var(--saturation-factor, 1)*0%) 24.6%;
+    --neutral-62-hsl: 0 calc(var(--saturation-factor, 1)*0%) 24%;
+    --neutral-63-hsl: 0 calc(var(--saturation-factor, 1)*0%) 23.4%;
+    --neutral-64-hsl: 0 calc(var(--saturation-factor, 1)*0%) 22.6%;
+    --neutral-65-hsl: 0 calc(var(--saturation-factor, 1)*0%) 22.2%;
+    --neutral-66-hsl: 0 calc(var(--saturation-factor, 1)*0%) 21.4%;
+    --neutral-67-hsl: 0 calc(var(--saturation-factor, 1)*0%) 20.8%;
+    --neutral-68-hsl: 0 calc(var(--saturation-factor, 1)*0%) 20.2%;
+    --neutral-69-hsl: 0 calc(var(--saturation-factor, 1)*0%) 19.6%;
+    --neutral-70-hsl: 0 calc(var(--saturation-factor, 1)*0%) 19%;
+    --neutral-71-hsl: 0 calc(var(--saturation-factor, 1)*0%) 18.2%;
+    --neutral-72-hsl: 0 calc(var(--saturation-factor, 1)*0%) 17.8%;
+    --neutral-73-hsl: 0 calc(var(--saturation-factor, 1)*0%) 17%;
+    --neutral-74-hsl: 0 calc(var(--saturation-factor, 1)*0%) 16.6%;
+    --neutral-75-hsl: 0 calc(var(--saturation-factor, 1)*0%) 15.8%;
+    --neutral-76-hsl: 0 calc(var(--saturation-factor, 1)*0%) 15.3%;
+    --neutral-77-hsl: 0 calc(var(--saturation-factor, 1)*0%) 14.9%;
+    --neutral-78-hsl: 0 calc(var(--saturation-factor, 1)*0%) 14.1%;
+    --neutral-79-hsl: 0 calc(var(--saturation-factor, 1)*0%) 13.7%;
+    --neutral-80-hsl: 0 calc(var(--saturation-factor, 1)*0%) 13%;
+    --neutral-81-hsl: 0 calc(var(--saturation-factor, 1)*0%) 12.4%;
+    --neutral-82-hsl: 0 calc(var(--saturation-factor, 1)*0%) 12%;
+    --neutral-83-hsl: 0 calc(var(--saturation-factor, 1)*0%) 11.3%;
+    --neutral-84-hsl: 0 calc(var(--saturation-factor, 1)*0%) 10.9%;
+    --neutral-85-hsl: 0 calc(var(--saturation-factor, 1)*0%) 10.2%;
+    --neutral-86-hsl: 0 calc(var(--saturation-factor, 1)*0%) 9.8%;
+    --neutral-87-hsl: 0 calc(var(--saturation-factor, 1)*0%) 9.3%;
+    --neutral-88-hsl: 0 calc(var(--saturation-factor, 1)*0%) 8.7%;
+    --neutral-89-hsl: 0 calc(var(--saturation-factor, 1)*0%) 8.2%;
+    --neutral-90-hsl: 0 calc(var(--saturation-factor, 1)*0%) 7.8%;
+    --neutral-91-hsl: 0 calc(var(--saturation-factor, 1)*0%) 7.1%;
+    --neutral-92-hsl: 0 calc(var(--saturation-factor, 1)*0%) 6.5%;
+    --neutral-93-hsl: 0 calc(var(--saturation-factor, 1)*0%) 6%;
+    --neutral-94-hsl: 0 calc(var(--saturation-factor, 1)*0%) 5.1%;
+    --neutral-95-hsl: 0 calc(var(--saturation-factor, 1)*0%) 4.4%;
+    --neutral-96-hsl: 0 calc(var(--saturation-factor, 1)*0%) 3.8%;
+    --neutral-97-hsl: 0 calc(var(--saturation-factor, 1)*0%) 2.7%;
+    --neutral-98-hsl: 0 calc(var(--saturation-factor, 1)*0%) 1.9%;
+    --neutral-99-hsl: 0 calc(var(--saturation-factor, 1)*0%) 0.8%;
+    --neutral-100-hsl: 0 calc(var(--saturation-factor, 1)*0%) 0%;
+    /* blurple scale -> green */
+    --blurple-1-hsl: 141 calc(var(--saturation-factor, 1)*88%) 95.1%;
+    --blurple-2-hsl: 141 calc(var(--saturation-factor, 1)*88%) 94.5%;
+    --blurple-3-hsl: 141 calc(var(--saturation-factor, 1)*88%) 93.7%;
+    --blurple-4-hsl: 141 calc(var(--saturation-factor, 1)*88%) 92.9%;
+    --blurple-5-hsl: 141 calc(var(--saturation-factor, 1)*88%) 92.4%;
+    --blurple-6-hsl: 141 calc(var(--saturation-factor, 1)*88%) 91.6%;
+    --blurple-7-hsl: 141 calc(var(--saturation-factor, 1)*88%) 91%;
+    --blurple-8-hsl: 141 calc(var(--saturation-factor, 1)*88%) 90.2%;
+    --blurple-9-hsl: 141 calc(var(--saturation-factor, 1)*88%) 89.6%;
+    --blurple-10-hsl: 141 calc(var(--saturation-factor, 1)*88%) 89%;
+    --blurple-11-hsl: 141 calc(var(--saturation-factor, 1)*88%) 88.2%;
+    --blurple-12-hsl: 141 calc(var(--saturation-factor, 1)*88%) 87.6%;
+    --blurple-13-hsl: 141 calc(var(--saturation-factor, 1)*88%) 86.9%;
+    --blurple-14-hsl: 141 calc(var(--saturation-factor, 1)*88%) 86.3%;
+    --blurple-15-hsl: 141 calc(var(--saturation-factor, 1)*88%) 85.7%;
+    --blurple-16-hsl: 141 calc(var(--saturation-factor, 1)*88%) 85.1%;
+    --blurple-17-hsl: 141 calc(var(--saturation-factor, 1)*88%) 84.5%;
+    --blurple-18-hsl: 141 calc(var(--saturation-factor, 1)*88%) 83.7%;
+    --blurple-19-hsl: 141 calc(var(--saturation-factor, 1)*88%) 83.1%;
+    --blurple-20-hsl: 141 calc(var(--saturation-factor, 1)*88%) 82.5%;
+    --blurple-21-hsl: 141 calc(var(--saturation-factor, 1)*88%) 82%;
+    --blurple-22-hsl: 141 calc(var(--saturation-factor, 1)*88%) 81.4%;
+    --blurple-23-hsl: 141 calc(var(--saturation-factor, 1)*88%) 80.8%;
+    --blurple-24-hsl: 141 calc(var(--saturation-factor, 1)*88%) 80.2%;
+    --blurple-25-hsl: 141 calc(var(--saturation-factor, 1)*88%) 79.6%;
+    --blurple-26-hsl: 141 calc(var(--saturation-factor, 1)*88%) 79%;
+    --blurple-27-hsl: 141 calc(var(--saturation-factor, 1)*86.4%) 78.2%;
+    --blurple-28-hsl: 141 calc(var(--saturation-factor, 1)*86.4%) 77.8%;
+    --blurple-29-hsl: 141 calc(var(--saturation-factor, 1)*85%) 77.1%;
+    --blurple-30-hsl: 141 calc(var(--saturation-factor, 1)*85.1%) 76.5%;
+    --blurple-31-hsl: 141 calc(var(--saturation-factor, 1)*83.7%) 75.7%;
+    --blurple-32-hsl: 141 calc(var(--saturation-factor, 1)*82.5%) 74.9%;
+    --blurple-33-hsl: 141 calc(var(--saturation-factor, 1)*82.6%) 74.5%;
+    --blurple-34-hsl: 141 calc(var(--saturation-factor, 1)*81.4%) 73.7%;
+    --blurple-35-hsl: 141 calc(var(--saturation-factor, 1)*81.5%) 73.3%;
+    --blurple-36-hsl: 141 calc(var(--saturation-factor, 1)*80.5%) 72.5%;
+    --blurple-37-hsl: 141 calc(var(--saturation-factor, 1)*80.6%) 72%;
+    --blurple-38-hsl: 141 calc(var(--saturation-factor, 1)*79.6%) 71.4%;
+    --blurple-39-hsl: 141 calc(var(--saturation-factor, 1)*79.7%) 70.8%;
+    --blurple-40-hsl: 141 calc(var(--saturation-factor, 1)*78.7%) 70.2%;
+    --blurple-41-hsl: 141 calc(var(--saturation-factor, 1)*77.8%) 69.4%;
+    --blurple-42-hsl: 141 calc(var(--saturation-factor, 1)*78%) 69%;
+    --blurple-43-hsl: 141 calc(var(--saturation-factor, 1)*77.1%) 68.4%;
+    --blurple-44-hsl: 141 calc(var(--saturation-factor, 1)*77.3%) 67.8%;
+    --blurple-45-hsl: 141 calc(var(--saturation-factor, 1)*76.4%) 67.3%;
+    --blurple-46-hsl: 141 calc(var(--saturation-factor, 1)*76.5%) 66.9%;
+    --blurple-47-hsl: 141 calc(var(--saturation-factor, 1)*75.7%) 66.3%;
+    --blurple-48-hsl: 141 calc(var(--saturation-factor, 1)*75.9%) 65.9%;
+    --blurple-49-hsl: 141 calc(var(--saturation-factor, 1)*75.1%) 65.1%;
+    --blurple-50-hsl: 141 calc(var(--saturation-factor, 1)*75.3%) 64.7%;
+    --blurple-51-hsl: 141 calc(var(--saturation-factor, 1)*70.2%) 63.1%;
+    --blurple-52-hsl: 141 calc(var(--saturation-factor, 1)*65.6%) 61.6%;
+    --blurple-53-hsl: 141 calc(var(--saturation-factor, 1)*61.3%) 60%;
+    --blurple-54-hsl: 141 calc(var(--saturation-factor, 1)*58%) 58.6%;
+    --blurple-55-hsl: 141 calc(var(--saturation-factor, 1)*54.2%) 57.1%;
+    --blurple-56-hsl: 141 calc(var(--saturation-factor, 1)*51.4%) 55.7%;
+    --blurple-57-hsl: 141 calc(var(--saturation-factor, 1)*48.7%) 54.3%;
+    --blurple-58-hsl: 141 calc(var(--saturation-factor, 1)*45.6%) 52.7%;
+    --blurple-59-hsl: 141 calc(var(--saturation-factor, 1)*43.3%) 51.4%;
+    --blurple-60-hsl: 141 calc(var(--saturation-factor, 1)*41.1%) 50%;
+    --blurple-61-hsl: 141 calc(var(--saturation-factor, 1)*41.2%) 48.6%;
+    --blurple-62-hsl: 141 calc(var(--saturation-factor, 1)*41.3%) 47.3%;
+    --blurple-63-hsl: 141 calc(var(--saturation-factor, 1)*41.6%) 46.1%;
+    --blurple-64-hsl: 141 calc(var(--saturation-factor, 1)*41.7%) 44.7%;
+    --blurple-65-hsl: 141 calc(var(--saturation-factor, 1)*41.8%) 43.3%;
+    --blurple-66-hsl: 141 calc(var(--saturation-factor, 1)*42.2%) 42.2%;
+    --blurple-67-hsl: 141 calc(var(--saturation-factor, 1)*42.3%) 40.8%;
+    --blurple-68-hsl: 141 calc(var(--saturation-factor, 1)*42.7%) 39.6%;
+    --blurple-69-hsl: 141 calc(var(--saturation-factor, 1)*42.9%) 38.2%;
+    --blurple-70-hsl: 141 calc(var(--saturation-factor, 1)*43.3%) 37.1%;
+    --blurple-71-hsl: 141 calc(var(--saturation-factor, 1)*43.5%) 35.7%;
+    --blurple-72-hsl: 141 calc(var(--saturation-factor, 1)*44%) 34.5%;
+    --blurple-73-hsl: 141 calc(var(--saturation-factor, 1)*43.7%) 33.5%;
+    --blurple-74-hsl: 141 calc(var(--saturation-factor, 1)*44.3%) 32.4%;
+    --blurple-75-hsl: 141 calc(var(--saturation-factor, 1)*44.8%) 31.2%;
+    --blurple-76-hsl: 141 calc(var(--saturation-factor, 1)*45.2%) 29.8%;
+    --blurple-77-hsl: 141 calc(var(--saturation-factor, 1)*45.8%) 28.6%;
+    --blurple-78-hsl: 141 calc(var(--saturation-factor, 1)*46.5%) 27.5%;
+    --blurple-79-hsl: 141 calc(var(--saturation-factor, 1)*47.3%) 26.3%;
+    --blurple-80-hsl: 141 calc(var(--saturation-factor, 1)*47.1%) 25.3%;
+    --blurple-81-hsl: 141 calc(var(--saturation-factor, 1)*47.9%) 24.1%;
+    --blurple-82-hsl: 141 calc(var(--saturation-factor, 1)*48.9%) 22.9%;
+    --blurple-83-hsl: 141 calc(var(--saturation-factor, 1)*49.9%) 21.8%;
+    --blurple-84-hsl: 141 calc(var(--saturation-factor, 1)*50.2%) 21%;
+    --blurple-85-hsl: 141 calc(var(--saturation-factor, 1)*51.4%) 19.8%;
+    --blurple-86-hsl: 141 calc(var(--saturation-factor, 1)*51.3%) 18.8%;
+    --blurple-87-hsl: 141 calc(var(--saturation-factor, 1)*52.8%) 17.6%;
+    --blurple-88-hsl: 141 calc(var(--saturation-factor, 1)*54.9%) 16.7%;
+    --blurple-89-hsl: 141 calc(var(--saturation-factor, 1)*55%) 15.7%;
+    --blurple-90-hsl: 141 calc(var(--saturation-factor, 1)*57.1%) 14.5%;
+    --blurple-91-hsl: 141 calc(var(--saturation-factor, 1)*57.8%) 13.7%;
+    --blurple-92-hsl: 141 calc(var(--saturation-factor, 1)*60.5%) 12.5%;
+    --blurple-93-hsl: 141 calc(var(--saturation-factor, 1)*61.2%) 11.6%;
+    --blurple-94-hsl: 141 calc(var(--saturation-factor, 1)*61.9%) 10.6%;
+    --blurple-95-hsl: 141 calc(var(--saturation-factor, 1)*65.5%) 9.2%;
+    --blurple-96-hsl: 141 calc(var(--saturation-factor, 1)*66.5%) 8%;
+    --blurple-97-hsl: 141 calc(var(--saturation-factor, 1)*67.3%) 6.7%;
+    --blurple-98-hsl: 141 calc(var(--saturation-factor, 1)*66.9%) 4.9%;
+    --blurple-99-hsl: 141 calc(var(--saturation-factor, 1)*74.5%) 2.5%;
+    --blurple-100-hsl: 141 calc(var(--saturation-factor, 1)*0%) 0%;
+    /* translucent overlays (hover / selected): plain white */
+    --opacity-1-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-4-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-8-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-12-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-16-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-20-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-24-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-28-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-32-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-36-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-40-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-44-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-48-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-52-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-56-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-60-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-64-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-68-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-72-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-76-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-80-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-84-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-88-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-92-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+    --opacity-96-hsl: 0 calc(var(--saturation-factor, 1)*0%) 100%;
+}
+
+/* =========================================================================
+   3. TYPOGRAPHY
+   html:root:root outranks Discord's per-language :root:lang() font rules.
+   ========================================================================= */
+html:root:root {
+    --font-primary: var(--sp-font);
+    --font-display: var(--sp-font);
+    --font-headline: var(--sp-font);
+    --font-code: var(--sp-font-code);
+    --primitive-typography-family-dm-sans: var(--sp-font);
+    --primitive-typography-family-rethink-sans: var(--sp-font);
+}
+
+body {
+    font-family: var(--sp-font);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* =========================================================================
+   4. DISCORD DESIGN TOKENS
+   Applies to every dark variant (Dark / Darker / Midnight), but not to
+   Nitro profile themes, which keep their own colours.
+   ========================================================================= */
+:root:is(.theme-dark, .theme-darker, .theme-midnight),
+:root :is(.theme-dark, .theme-darker, .theme-midnight):not(.custom-user-profile-theme) {
+    /* Backgrounds */
+    --app-frame-background: var(--sp-bg-0);
+    --background-base-lowest: var(--sp-bg-0);
+    --background-base-lower: var(--sp-bg-1);
+    --background-base-low: var(--sp-bg-2);
+    --background-surface-high: var(--sp-surface-1);
+    --background-surface-higher: var(--sp-surface-2);
+    --background-surface-highest: var(--sp-surface-3);
+    --background-mod-subtle: rgb(255 255 255 / 0.04);
+    --background-mod-muted: rgb(255 255 255 / 0.06);
+    --background-mod-normal: rgb(255 255 255 / 0.08);
+    --background-mod-strong: rgb(255 255 255 / 0.12);
+    --background-code: #0a0a0a;
+    --background-scrim: rgb(0 0 0 / 0.78);
+    --background-brand: var(--sp-green-strong);
+    --background-accent: var(--sp-green-strong);
+    --modal-background: var(--sp-surface-1);
+    --card-background-default: var(--sp-surface-1);
+    --chat-background-default: var(--sp-surface-2);
+    --custom-channel-members-bg: var(--sp-bg-1);
+
+    /* Brand / accent */
+    --brand-360: color-mix(in oklab, var(--sp-green) 70%, white);
+    --brand-400: var(--sp-green-bright);
+    --brand-500: var(--sp-green);
+    --brand-500-hsl: var(--sp-green-hsl);
+    --brand-560: var(--sp-green-strong);
+    --brand-600: color-mix(in oklab, var(--sp-green-strong) 82%, black);
+    --text-brand: var(--sp-green);
+    --icon-brand: var(--sp-green);
+    --control-primary-background-default: var(--sp-green);
+    --control-primary-background-hover: var(--sp-green-bright);
+    --control-primary-background-active: var(--sp-green-strong);
+    --control-primary-text-default: var(--sp-on-green);
+    --control-primary-text-hover: var(--sp-on-green);
+    --control-primary-text-active: var(--sp-on-green);
+    --control-primary-icon-default: var(--sp-on-green);
+    --control-primary-icon-hover: var(--sp-on-green);
+    --control-primary-icon-active: var(--sp-on-green);
+    --control-secondary-background-default: rgb(255 255 255 / 0.07);
+    --control-secondary-background-hover: rgb(255 255 255 / 0.11);
+    --control-secondary-background-active: rgb(255 255 255 / 0.15);
+    --control-secondary-border-default: var(--sp-line-2);
+    --control-secondary-border-hover: var(--sp-line-3);
+    --control-secondary-border-active: var(--sp-line-3);
+    --togglebutton-background-selected: var(--sp-green-soft);
+    --togglebutton-border-selected: color-mix(in oklab, var(--sp-green) 50%, transparent);
+    --reaction-background-active: var(--sp-green-soft);
+    --reaction-border-active: color-mix(in oklab, var(--sp-green) 55%, transparent);
+    --radio-border-selected-default: var(--sp-green);
+    --keyword-highlight-background: color-mix(in oklab, var(--sp-green) 30%, transparent);
+
+    /* Text */
+    --text-strong: var(--sp-text-strong);
+    --text-default: var(--sp-text);
+    --text-muted: var(--sp-text-muted);
+    --text-subtle: var(--sp-text-subtle);
+    --text-link: var(--sp-link);
+    --chat-text-muted: var(--sp-text-muted);
+    --channels-default: var(--sp-text-muted);
+
+    /* Interactive: hover / pressed / selected rows everywhere */
+    --interactive-text-default: var(--sp-text-muted);
+    --interactive-text-hover: var(--sp-text-strong);
+    --interactive-text-active: var(--sp-text-strong);
+    --interactive-icon-default: var(--sp-text-muted);
+    --interactive-icon-hover: var(--sp-text-strong);
+    --interactive-icon-active: var(--sp-text-strong);
+    --interactive-muted: color-mix(in oklab, var(--sp-text-subtle) 70%, transparent);
+    --interactive-background-hover: rgb(255 255 255 / 0.06);
+    --interactive-background-active: rgb(255 255 255 / 0.09);
+    --interactive-background-selected: rgb(255 255 255 / 0.10);
+    --interactive-accent-background-default: var(--sp-green-soft);
+    --icon-default: var(--sp-text);
+    --icon-muted: var(--sp-text-muted);
+    --icon-subtle: var(--sp-text-subtle);
+    --icon-strong: var(--sp-text-strong);
+
+    /* Lines */
+    --border-subtle: var(--sp-line-1);
+    --border-muted: var(--sp-line-1);
+    --border-normal: var(--sp-line-2);
+    --border-strong: var(--sp-line-3);
+    --border-focus: var(--sp-green);
+    --app-frame-border: var(--sp-line-1);
+    --chat-border: var(--sp-line-1);
+
+    /* Inputs */
+    --input-background-default: var(--sp-surface-3);
+    --input-border-default: transparent;
+    --input-border-hover: var(--sp-line-3);
+    --input-border-active: var(--sp-text-strong);
+    --input-placeholder-text-default: var(--sp-text-subtle);
+    --input-text-default: var(--sp-text-strong);
+
+    /* Messages */
+    --message-background-hover: rgb(255 255 255 / 0.035);
+    --message-highlight-background-default: var(--sp-green-softer);
+    --message-highlight-background-hover: var(--sp-green-soft);
+    --message-mentioned-background-default: color-mix(in oklab, var(--sp-green) 9%, transparent);
+    --message-mentioned-background-hover: color-mix(in oklab, var(--sp-green) 14%, transparent);
+
+    /* Status: online dots match the accent */
+    --status-positive: var(--sp-green);
+    --status-online: var(--sp-green);
+
+    /* Scrollbars */
+    --scrollbar-auto-thumb: rgb(255 255 255 / 0.16);
+    --scrollbar-auto-track: transparent;
+    --scrollbar-thin-thumb: rgb(255 255 255 / 0.16);
+    --scrollbar-thin-track: transparent;
+
+    /* Elevation */
+    --shadow-low: 0 2px 4px rgb(0 0 0 / 0.4);
+    --shadow-medium: 0 8px 24px rgb(0 0 0 / 0.55);
+    --shadow-high: var(--sp-shadow);
+}
+
+::selection {
+    background: color-mix(in oklab, var(--sp-green) 40%, transparent);
+    color: #fff;
+}
+
+/* =========================================================================
+   5. APP SHELL
+   ========================================================================= */
+
+/* App frame with a slowly drifting green ambient glow behind everything */
+.bg_Fd0FEH {
+    overflow: hidden;
+}
+
+.bg_Fd0FEH::before {
+    content: "";
+    position: absolute;
+    inset: -30%;
+    pointer-events: none;
+    background:
+        radial-gradient(36% 40% at 80% 14%, color-mix(in oklab, var(--sp-green) 13%, transparent), transparent 70%),
+        radial-gradient(32% 38% at 14% 86%, color-mix(in oklab, var(--sp-teal) 10%, transparent), transparent 70%),
+        radial-gradient(24% 28% at 52% 56%, color-mix(in oklab, var(--sp-green-strong) 6%, transparent), transparent 70%);
+    will-change: transform;
+}
+
+.bar_3zSH5d {
+    background: transparent;
+}
+
+/* Channel sidebar: a rounded "library" card floating on the black frame */
+.sidebarList_pog62O {
+    background: var(--sp-bg-2);
+    border-color: var(--sp-line-1) !important;
+}
+
+/* User panel (bottom-left): floating "now playing" card */
+.panels_pog62O {
+    background: linear-gradient(160deg, color-mix(in oklab, var(--sp-green) 7%, transparent), transparent 60%), var(--sp-glass);
+    backdrop-filter: var(--sp-blur);
+    border: 1px solid var(--sp-line-2);
+    border-radius: var(--sp-radius-lg);
+    box-shadow: var(--sp-edge), var(--sp-shadow-float);
+}
+
+/* =========================================================================
+   6. SERVER BAR
+   ========================================================================= */
+.blobContainer_IaPwK5 {
+    transition: transform var(--sp-med) var(--sp-ease-float), filter var(--sp-med) var(--sp-ease);
+}
+
+.blobContainer_IaPwK5:hover {
+    transform: translateY(-3px) scale(1.06);
+    filter: drop-shadow(0 10px 16px rgb(0 0 0 / 0.7));
+}
+
+.blobContainer_IaPwK5:active {
+    transform: scale(0.95);
+}
+
+.blobContainer_IaPwK5.selected_IaPwK5 {
+    filter: drop-shadow(0 0 12px color-mix(in oklab, var(--sp-green) 40%, transparent));
+}
+
+.wrapper_JJ-hgR {
+    transition: background-color var(--sp-med) var(--sp-ease), color var(--sp-med) var(--sp-ease), border-radius var(--sp-med) var(--sp-ease);
+}
+
+.guildSeparator_3WHVfy {
+    background: linear-gradient(90deg, transparent, var(--sp-line-3), transparent);
+    border-radius: var(--sp-pill);
+}
+
+/* Selected / unread pill in green */
+.item__o8_Xq {
+    background: var(--sp-green);
+}
+
+/* =========================================================================
+   7. CHANNEL LIST
+   Channel rows have no stable class, so these rules use Discord's list-item ids.
+   ========================================================================= */
+[data-list-item-id^="channels___"] {
+    border-radius: var(--sp-radius-sm) !important;
+    transition:
+        background-color var(--sp-fast) var(--sp-ease),
+        color var(--sp-fast) var(--sp-ease),
+        box-shadow var(--sp-med) var(--sp-ease),
+        transform var(--sp-med) var(--sp-ease-float);
+}
+
+[data-list-item-id^="channels___"]:hover {
+    transform: translateX(3px);
+}
+
+[data-list-item-id^="channels___"]:active {
+    transform: translateX(3px) scale(0.98);
+}
+
+/* =========================================================================
+   8. CHAT
+   ========================================================================= */
+
+/* Playlist-style green wash fading down from the top of the chat */
+.chatContent_z_gUBg {
+    background:
+        linear-gradient(180deg, var(--sp-header-wash) 0%, transparent var(--sp-header-height)),
+        var(--sp-bg-1);
+}
+
+/* Channel header: see-through so the wash shows behind it */
+.title_z_gUBg {
+    background: color-mix(in oklab, var(--sp-bg-1) 40%, transparent);
+    backdrop-filter: var(--sp-blur);
+    border-bottom: 1px solid var(--sp-line-1);
+}
+
+/* Message rows: rounded hover card with a green edge */
+.message_SY_P2T {
+    border-radius: var(--sp-radius-md) !important;
+    margin-inline: 8px;
+    box-shadow: inset 0 0 0 0 transparent;
+    transition:
+        background-color var(--sp-med) var(--sp-ease),
+        box-shadow var(--sp-med) var(--sp-ease);
+}
+
+.message_SY_P2T:hover {
+    box-shadow: inset 3px 0 0 0 var(--sp-green);
+}
+
+.mentioned_SY_P2T::before,
+.replying_SY_P2T::before {
+    border-radius: var(--sp-pill);
+    background: var(--sp-green);
+}
+
+/* Avatars float up while hovering the message */
+.avatar_2i8Bfm {
+    transition: transform var(--sp-med) var(--sp-ease-float), box-shadow var(--sp-med) var(--sp-ease);
+}
+
+.message_SY_P2T:hover .avatar_2i8Bfm {
+    transform: translateY(-2px) scale(1.06);
+    box-shadow: 0 8px 18px -6px rgb(0 0 0 / 0.8);
+}
+
+.repliedMessage_2i8Bfm::before {
+    border-color: var(--sp-line-3);
+}
+
+/* Code blocks + inline code */
+.markup_ku1OHH pre,
+.markup_ku1OHH code {
+    border-radius: var(--sp-radius-sm);
+    font-family: var(--sp-font-code);
+}
+
+.markup_ku1OHH pre {
+    border: 1px solid var(--sp-line-1);
+}
+
+.codeContainer_ku1OHH {
+    border-radius: var(--sp-radius-sm);
+}
+
+.blockquoteDivider_ku1OHH {
+    background: var(--sp-green);
+    border-radius: var(--sp-pill);
+}
+
+/* Embeds: album-card style, they lift on hover */
+.embedFull_XyW1ZT {
+    border-radius: var(--sp-radius-md);
+    background: var(--sp-surface-1);
+    border-top: 1px solid var(--sp-line-1);
+    border-right: 1px solid var(--sp-line-1);
+    border-bottom: 1px solid var(--sp-line-1);
+    transition:
+        background-color var(--sp-med) var(--sp-ease),
+        transform var(--sp-slow) var(--sp-ease-float),
+        box-shadow var(--sp-slow) var(--sp-ease);
+}
+
+.embedFull_XyW1ZT:hover {
+    background-color: var(--sp-surface-3);
+    transform: translateY(-3px);
+    box-shadow: var(--sp-shadow-float);
+}
+
+/* Reactions: pills that float up on hover */
+.reaction_MmKct8 {
+    border-radius: var(--sp-pill);
+    transition:
+        transform var(--sp-med) var(--sp-ease-float),
+        background-color var(--sp-fast) var(--sp-ease),
+        border-color var(--sp-fast) var(--sp-ease),
+        box-shadow var(--sp-med) var(--sp-ease);
+}
+
+.reaction_MmKct8:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 16px -6px rgb(0 0 0 / 0.7);
+}
+
+.reaction_MmKct8:active {
+    transform: scale(0.94);
+}
+
+.reactionMe_MmKct8 {
+    background-color: var(--sp-green-soft);
+    border-color: color-mix(in oklab, var(--sp-green) 55%, transparent);
+    box-shadow: 0 0 14px -4px color-mix(in oklab, var(--sp-green) 55%, transparent);
+}
+
+/* =========================================================================
+   9. MESSAGE BOX: a floating pill, like the search bar
+   ========================================================================= */
+.channelTextArea_2x8-Qn .scrollableContainer_2x8-Qn {
+    background: var(--sp-surface-3);
+    border: 1px solid transparent;
+    border-radius: 24px;
+    box-shadow: var(--sp-edge), 0 10px 28px -10px rgb(0 0 0 / 0.8);
+    transition:
+        border-color var(--sp-med) var(--sp-ease),
+        box-shadow var(--sp-slow) var(--sp-ease),
+        background-color var(--sp-med) var(--sp-ease),
+        transform var(--sp-slow) var(--sp-ease-float);
+}
+
+.channelTextArea_2x8-Qn:hover .scrollableContainer_2x8-Qn {
+    background: color-mix(in oklab, var(--sp-surface-3) 85%, white);
+}
+
+.channelTextArea_2x8-Qn:focus-within .scrollableContainer_2x8-Qn {
+    border-color: rgb(255 255 255 / 0.7);
+    transform: translateY(-2px);
+    box-shadow: var(--sp-edge), 0 18px 40px -12px rgb(0 0 0 / 0.9), 0 0 0 4px var(--sp-green-softer);
+}
+
+.channelTextArea_2x8-Qn .button_2x8-Qn {
+    transition: transform var(--sp-med) var(--sp-ease-float), color var(--sp-fast) var(--sp-ease);
+}
+
+.channelTextArea_2x8-Qn .button_2x8-Qn:hover {
+    transform: translateY(-2px) scale(1.12);
+    color: var(--sp-green);
+}
+
+/* =========================================================================
+   10. MEMBER LIST
+   ========================================================================= */
+.container_86es0b,
+.members_86es0b,
+.member_86es0b {
+    background: var(--sp-bg-1);
+}
+
+.container_86es0b {
+    border-inline-start-color: var(--sp-line-1);
+}
+
+.container_J1Adu_ {
+    border-radius: var(--sp-radius-sm);
+    transition:
+        background-color var(--sp-fast) var(--sp-ease),
+        box-shadow var(--sp-med) var(--sp-ease),
+        transform var(--sp-med) var(--sp-ease-float);
+}
+
+.container_J1Adu_:hover {
+    transform: translateX(3px);
+}
+
+.container_J1Adu_.selected_J1Adu_ {
+    background: rgb(255 255 255 / 0.1);
+}
+
+.membersGroup_86es0b {
+    letter-spacing: 0.08em;
+    font-weight: 700;
+}
+
+/* =========================================================================
+   11. FLOATING UI: menus, tooltips, popouts, modals
+   ========================================================================= */
+.menu_M3qk4j {
+    background: var(--sp-surface-3) !important;
+    border: 1px solid var(--sp-line-1) !important;
+    border-radius: var(--sp-radius-sm);
+    box-shadow: var(--sp-shadow-float);
+}
+
+.item_M3qk4j {
+    border-radius: 4px;
+    transition:
+        background-color var(--sp-fast) var(--sp-ease),
+        color var(--sp-fast) var(--sp-ease),
+        padding var(--sp-med) var(--sp-ease-float);
+}
+
+.item_M3qk4j.focused_M3qk4j {
+    background: rgb(255 255 255 / 0.1);
+    color: var(--sp-text-strong);
+    padding-inline-start: 12px;
+}
+
+.item_M3qk4j.colorDanger_M3qk4j.focused_M3qk4j {
+    background: color-mix(in oklab, #f15e6c 22%, transparent);
+    color: #ff8a95;
+}
+
+.tooltipPrimary_3_v8qp {
+    --tooltip-pointer-bg: var(--sp-surface-3);
+    background: var(--sp-surface-3);
+    border-radius: var(--sp-radius-sm);
+    box-shadow: var(--sp-shadow);
+    font-weight: 600;
+}
+
+.tooltipPrimary_3_v8qp .tooltipPointer_3_v8qp {
+    border-top-color: var(--sp-surface-3);
+}
+
+.outer_P1YEjQ {
+    border-radius: var(--sp-radius-lg);
+    box-shadow: var(--sp-shadow-float);
+}
+
+.root__KoJTP {
+    border: 1px solid var(--sp-line-2);
+    border-radius: var(--sp-radius-lg);
+    box-shadow: var(--sp-shadow-float);
+}
+
+/* =========================================================================
+   12. CONTROLS: pill buttons that grow on hover
+   ========================================================================= */
+.button_9OQtot {
+    border-radius: var(--sp-pill);
+    font-weight: 700;
+    transition:
+        transform var(--sp-med) var(--sp-ease-float),
+        filter var(--sp-fast) var(--sp-ease),
+        box-shadow var(--sp-med) var(--sp-ease),
+        background-color var(--sp-fast) var(--sp-ease);
+}
+
+.button_9OQtot:not(:disabled):hover {
+    transform: scale(1.04);
+}
+
+.button_9OQtot:not(:disabled):active {
+    transform: scale(0.96);
+}
+
+.lookFilled_9OQtot.colorBrand_9OQtot,
+.lookFilled_9OQtot.colorBrand_9OQtot .contents_9OQtot {
+    color: var(--sp-on-green);
+}
+
+.lookFilled_9OQtot.colorBrand_9OQtot:not(:disabled) {
+    background-color: var(--sp-green);
+}
+
+.lookFilled_9OQtot.colorBrand_9OQtot:not(:disabled):hover {
+    background-color: var(--sp-green-bright);
+    box-shadow: var(--sp-glow);
+}
+
+.lookOutlined_9OQtot {
+    border-color: var(--sp-text-subtle);
+}
+
+.lookOutlined_9OQtot:not(:disabled):hover {
+    border-color: var(--sp-text-strong);
+}
+
+.inputDefault_cZux1n {
+    border-radius: var(--sp-radius-sm);
+    transition: border-color var(--sp-med) var(--sp-ease), box-shadow var(--sp-med) var(--sp-ease), background-color var(--sp-med) var(--sp-ease);
+}
+
+.inputDefault_cZux1n:hover {
+    background-color: color-mix(in oklab, var(--sp-surface-3) 85%, white);
+}
+
+.inputDefault_cZux1n:focus {
+    box-shadow: 0 0 0 3px var(--sp-green-softer);
+}
+
+/* Settings sidebar tabs */
+.side_6zZYhF .item_6zZYhF {
+    border-radius: var(--sp-radius-sm);
+    transition:
+        background-color var(--sp-fast) var(--sp-ease),
+        color var(--sp-fast) var(--sp-ease),
+        transform var(--sp-med) var(--sp-ease-float);
+}
+
+.side_6zZYhF .item_6zZYhF:hover {
+    transform: translateX(3px);
+}
+
+.side_6zZYhF .item_6zZYhF.selected_6zZYhF {
+    background: rgb(255 255 255 / 0.1);
+    color: var(--sp-text-strong);
+    box-shadow: inset 3px 0 0 var(--sp-green);
+}
+
+/* Rounded, slim scrollbars */
+:is(.thin_tqapBM, .auto_tqapBM)::-webkit-scrollbar-thumb {
+    border-radius: var(--sp-pill);
+}
+
+:is(.thin_tqapBM, .auto_tqapBM)::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(255 255 255 / 0.3);
+}
+
+/* =========================================================================
+   13. ANIMATIONS
+   Everything below is skipped when "Reduce motion" is on (Discord or OS).
+   Idle floating uses the separate `translate` property, so it never
+   fights the `transform` used by hover effects and entrances. Entrances
+   use "backwards" fill so they never hold a transform after they finish.
+   ========================================================================= */
+@keyframes sp-float-in {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.97);
+        filter: blur(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+        filter: none;
+    }
+}
+
+@keyframes sp-pop {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.94);
+    }
+
+    100% {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes sp-pop-bounce {
+    0% {
+        opacity: 0;
+        transform: scale(0.6);
+    }
+
+    60% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes sp-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes sp-slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes sp-drop {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes sp-fade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes sp-drift {
+    0% {
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    }
+
+    50% {
+        transform: translate3d(-6%, 5%, 0) rotate(10deg) scale(1.1);
+    }
+
+    100% {
+        transform: translate3d(5%, -4%, 0) rotate(-6deg) scale(1.02);
+    }
+}
+
+/* Idle bob: tiny, slow vertical float */
+@keyframes sp-bob {
+
+    0%,
+    100% {
+        translate: 0 0;
+    }
+
+    50% {
+        translate: 0 -3px;
+    }
+}
+
+@keyframes sp-bob-soft {
+
+    0%,
+    100% {
+        translate: 0 0;
+    }
+
+    50% {
+        translate: 0 -1.5px;
+    }
+}
+
+/* Header wash slowly breathes */
+@keyframes sp-wash {
+
+    0%,
+    100% {
+        background-size: 100% 100%, 100% 100%;
+    }
+
+    50% {
+        background-size: 100% 125%, 100% 100%;
+    }
+}
+
+/* Equalizer bars (typing indicator) */
+@keyframes sp-eq {
+
+    0%,
+    100% {
+        transform: scaleY(0.5);
+        background-color: var(--sp-text-muted);
+    }
+
+    50% {
+        transform: scaleY(1.6);
+        background-color: var(--sp-green);
+    }
+}
+
+@keyframes sp-glow-pulse {
+
+    0%,
+    100% {
+        opacity: 0.55;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes sp-pulse {
+
+    0%,
+    100% {
+        scale: 1;
+    }
+
+    50% {
+        scale: 1.1;
+    }
+}
+
+@keyframes sp-shimmer {
+    from {
+        background-position: 0% 50%;
+    }
+
+    to {
+        background-position: 200% 50%;
+    }
+}
+
+@keyframes sp-tilt {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    30% {
+        transform: rotate(-6deg);
+    }
+
+    65% {
+        transform: rotate(4deg);
+    }
+}
+
+@keyframes sp-wiggle {
+
+    0%,
+    100% {
+        transform: scale(1.3) rotate(0deg);
+    }
+
+    25% {
+        transform: scale(1.3) rotate(-10deg);
+    }
+
+    75% {
+        transform: scale(1.3) rotate(10deg);
+    }
+}
+
+@keyframes sp-ring {
+    from {
+        box-shadow: 0 0 0 0 color-mix(in oklab, var(--sp-green) 45%, transparent);
+    }
+
+    to {
+        box-shadow: 0 0 0 3px var(--sp-green-softer);
+    }
+}
+
+@keyframes sp-focus-glow {
+
+    0%,
+    100% {
+        box-shadow: var(--sp-edge), 0 18px 40px -12px rgb(0 0 0 / 0.9), 0 0 0 4px var(--sp-green-softer);
+    }
+
+    50% {
+        box-shadow: var(--sp-edge), 0 22px 44px -12px rgb(0 0 0 / 0.9), 0 0 0 5px var(--sp-green-soft);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+
+    /* ---- Ambient ---------------------------------------------------- */
+
+    html:not(.reduce-motion) .bg_Fd0FEH::before {
+        animation: sp-drift var(--sp-ambient-speed) ease-in-out infinite alternate;
+    }
+
+    html:not(.reduce-motion) .chatContent_z_gUBg {
+        animation:
+            sp-fade var(--sp-med) var(--sp-ease) backwards,
+            sp-wash 14s ease-in-out infinite;
+    }
+
+    /* ---- Chat ------------------------------------------------------- */
+
+    /* Switching channels: the list floats up into view */
+    html:not(.reduce-motion) .messagesWrapper_8AE1Qq {
+        animation: sp-fade-up var(--sp-slow) var(--sp-ease) backwards;
+    }
+
+    /* New messages drift up and come into focus */
+    html:not(.reduce-motion) .messageListItem_SY_P2T {
+        animation: sp-float-in var(--sp-slow) var(--sp-ease-float) backwards;
+    }
+
+    html:not(.reduce-motion) .title_z_gUBg {
+        animation: sp-drop var(--sp-slow) var(--sp-ease) backwards;
+    }
+
+    /* Message box floats in, then bobs very gently while idle */
+    html:not(.reduce-motion) .channelTextArea_2x8-Qn {
+        animation: sp-float-in var(--sp-slow) var(--sp-ease-float) 80ms backwards;
+    }
+
+    html:not(.reduce-motion) .channelTextArea_2x8-Qn:focus-within .scrollableContainer_2x8-Qn {
+        animation: sp-focus-glow 3.4s ease-in-out infinite;
+    }
+
+    /* Embeds and attachments float in */
+    html:not(.reduce-motion) :is(.embedFull_XyW1ZT, .mosaicItem_BwHv05) {
+        animation: sp-float-in var(--sp-slow) var(--sp-ease-float) backwards;
+    }
+
+    /* Reactions bounce in when added */
+    html:not(.reduce-motion) .reaction_MmKct8 {
+        animation: sp-pop-bounce var(--sp-slow) var(--sp-ease-spring) backwards;
+    }
+
+    /* Images lift like album art on hover */
+    html:not(.reduce-motion) .imageWrapper_W6wEGA {
+        transition: transform var(--sp-slow) var(--sp-ease-float), box-shadow var(--sp-slow) var(--sp-ease);
+    }
+
+    html:not(.reduce-motion) .imageWrapper_W6wEGA:hover {
+        transform: translateY(-4px) scale(1.015);
+        box-shadow: var(--sp-shadow-float);
+    }
+
+    /* Emoji in messages wiggle when hovered */
+    html:not(.reduce-motion) .messageContent_2i8Bfm img.emoji {
+        transition: transform var(--sp-med) var(--sp-ease-spring);
+    }
+
+    html:not(.reduce-motion) .messageContent_2i8Bfm img.emoji:hover {
+        transform: scale(1.3);
+        animation: sp-wiggle 420ms ease-in-out;
+    }
+
+    /* Links: a green underline sweeps in on hover */
+    html:not(.reduce-motion) .markup_ku1OHH a {
+        background-image: linear-gradient(90deg, var(--sp-green), var(--sp-teal));
+        background-repeat: no-repeat;
+        background-position: 0 100%;
+        background-size: 0% 1.5px;
+        transition: background-size var(--sp-med) var(--sp-ease), color var(--sp-fast) var(--sp-ease);
+    }
+
+    html:not(.reduce-motion) .markup_ku1OHH a:hover {
+        background-size: 100% 1.5px;
+        text-decoration: none;
+    }
+
+    /* Code blocks glow faintly green on hover */
+    html:not(.reduce-motion) .markup_ku1OHH pre {
+        transition: border-color var(--sp-med) var(--sp-ease), box-shadow var(--sp-med) var(--sp-ease);
+    }
+
+    html:not(.reduce-motion) .markup_ku1OHH pre:hover {
+        border-color: color-mix(in oklab, var(--sp-green) 35%, transparent);
+        box-shadow: 0 0 22px -8px color-mix(in oklab, var(--sp-green) 45%, transparent);
+    }
+
+    /* Mentions: the side bar softly pulses */
+    html:not(.reduce-motion) .mentioned_SY_P2T::before {
+        animation: sp-glow-pulse 2.4s ease-in-out infinite;
+    }
+
+    /* Typing indicator: dots become a little equalizer */
+    html:not(.reduce-motion) .typing_U9Tvvz .dot_U9Tvvz {
+        border-radius: 2px;
+        transform-origin: 50% 100%;
+        animation: sp-eq 0.9s ease-in-out infinite;
+    }
+
+    html:not(.reduce-motion) .typing_U9Tvvz .dot_U9Tvvz:nth-child(2) {
+        animation-delay: 0.15s;
+    }
+
+    html:not(.reduce-motion) .typing_U9Tvvz .dot_U9Tvvz:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+
+    /* ---- Server bar ------------------------------------------------- */
+
+    html:not(.reduce-motion) .blobContainer_IaPwK5 {
+        animation: sp-pop-bounce var(--sp-slow) var(--sp-ease-spring) backwards;
+    }
+
+    /* The selected server floats gently */
+    html:not(.reduce-motion) .blobContainer_IaPwK5.selected_IaPwK5 {
+        animation:
+            sp-pop-bounce var(--sp-slow) var(--sp-ease-spring) backwards,
+            sp-bob-soft var(--sp-bob-speed) ease-in-out infinite;
+    }
+
+    html:not(.reduce-motion) .blobContainer_IaPwK5:hover .wrapper_JJ-hgR {
+        animation: sp-tilt 560ms var(--sp-ease);
+    }
+
+    html:not(.reduce-motion) .item__o8_Xq {
+        transition:
+            height var(--sp-med) var(--sp-ease-spring),
+            opacity var(--sp-med) var(--sp-ease),
+            transform var(--sp-med) var(--sp-ease-spring) !important;
+    }
+
+    html:not(.reduce-motion) .guildSeparator_3WHVfy {
+        background: linear-gradient(90deg, transparent, var(--sp-line-3), var(--sp-green), var(--sp-line-3), transparent);
+        background-size: 200% 100%;
+        animation: sp-shimmer 5s linear infinite;
+    }
+
+    /* Mention badges bounce in, then float and pulse */
+    html:not(.reduce-motion) .numberBadge_lMvXrQ {
+        animation:
+            sp-pop-bounce var(--sp-slow) var(--sp-ease-spring) backwards,
+            sp-pulse 2.6s ease-in-out 0.6s infinite;
+    }
+
+    /* ---- Channel list ----------------------------------------------- */
+
+    html:not(.reduce-motion) [data-list-item-id^="channels___"] {
+        animation: sp-slide-in var(--sp-slow) var(--sp-ease-float) backwards;
+    }
+
+    html:not(.reduce-motion) .sidebarList_pog62O li:nth-child(2) [data-list-item-id^="channels___"] {
+        animation-delay: 25ms;
+    }
+
+    html:not(.reduce-motion) .sidebarList_pog62O li:nth-child(3) [data-list-item-id^="channels___"] {
+        animation-delay: 50ms;
+    }
+
+    html:not(.reduce-motion) .sidebarList_pog62O li:nth-child(4) [data-list-item-id^="channels___"] {
+        animation-delay: 75ms;
+    }
+
+    html:not(.reduce-motion) .sidebarList_pog62O li:nth-child(5) [data-list-item-id^="channels___"] {
+        animation-delay: 100ms;
+    }
+
+    html:not(.reduce-motion) .sidebarList_pog62O li:nth-child(6) [data-list-item-id^="channels___"] {
+        animation-delay: 125ms;
+    }
+
+    html:not(.reduce-motion) .sidebarList_pog62O li:nth-child(7) [data-list-item-id^="channels___"] {
+        animation-delay: 150ms;
+    }
+
+    html:not(.reduce-motion) .sidebarList_pog62O li:nth-child(8) [data-list-item-id^="channels___"] {
+        animation-delay: 175ms;
+    }
+
+    html:not(.reduce-motion) .sidebarList_pog62O li:nth-child(9) [data-list-item-id^="channels___"] {
+        animation-delay: 200ms;
+    }
+
+    html:not(.reduce-motion) .sidebarList_pog62O li:nth-child(10) [data-list-item-id^="channels___"] {
+        animation-delay: 225ms;
+    }
+
+    html:not(.reduce-motion) .sidebarList_pog62O li:nth-child(n+11) [data-list-item-id^="channels___"] {
+        animation-delay: 250ms;
+    }
+
+    html:not(.reduce-motion) [data-list-item-id^="channels___"] svg {
+        transition: transform var(--sp-med) var(--sp-ease-float), color var(--sp-fast) var(--sp-ease);
+    }
+
+    html:not(.reduce-motion) [data-list-item-id^="channels___"]:hover svg {
+        transform: translateY(-1px) scale(1.15) rotate(-8deg);
+    }
+
+    /* ---- Header toolbar + user panel -------------------------------- */
+
+    html:not(.reduce-motion) .toolbar_ybUK7Z .iconWrapper_ybUK7Z {
+        transition: transform var(--sp-med) var(--sp-ease-float), color var(--sp-fast) var(--sp-ease);
+    }
+
+    html:not(.reduce-motion) .toolbar_ybUK7Z .iconWrapper_ybUK7Z:hover {
+        transform: translateY(-2px) scale(1.12);
+    }
+
+    html:not(.reduce-motion) .toolbar_ybUK7Z .iconWrapper_ybUK7Z:active {
+        transform: scale(0.9);
+    }
+
+    /* User panel floats in, then hovers in place like a "now playing" card */
+    html:not(.reduce-motion) .panels_pog62O {
+        animation:
+            sp-float-in var(--sp-slow) var(--sp-ease-float) backwards,
+            sp-bob var(--sp-bob-speed) ease-in-out 0.6s infinite;
+    }
+
+    html:not(.reduce-motion) .buttons_g6VwXp>* {
+        transition: transform var(--sp-med) var(--sp-ease-float), color var(--sp-fast) var(--sp-ease);
+    }
+
+    html:not(.reduce-motion) .buttons_g6VwXp>*:hover {
+        transform: translateY(-2px) scale(1.12);
+    }
+
+    html:not(.reduce-motion) .buttons_g6VwXp>*:active {
+        transform: scale(0.9);
+    }
+
+    html:not(.reduce-motion) .buttons_g6VwXp> :last-child svg {
+        transition: transform var(--sp-slow) var(--sp-ease-spring);
+    }
+
+    html:not(.reduce-motion) .buttons_g6VwXp> :last-child:hover svg {
+        transform: rotate(90deg);
+    }
+
+    html:not(.reduce-motion) .avatar_g6VwXp {
+        transition: transform var(--sp-med) var(--sp-ease-float);
+    }
+
+    html:not(.reduce-motion) .avatar_g6VwXp:hover {
+        transform: translateY(-2px) scale(1.08) rotate(-3deg);
+    }
+
+    /* ---- Member list ------------------------------------------------ */
+
+    html:not(.reduce-motion) .container_J1Adu_ {
+        animation: sp-slide-in var(--sp-slow) var(--sp-ease-float) backwards;
+    }
+
+    html:not(.reduce-motion) .membersGroup_86es0b {
+        animation: sp-fade-up var(--sp-slow) var(--sp-ease) backwards;
+    }
+
+    html:not(.reduce-motion) .avatar_J1Adu_ {
+        transition: transform var(--sp-med) var(--sp-ease-float);
+    }
+
+    html:not(.reduce-motion) .container_J1Adu_:hover .avatar_J1Adu_ {
+        transform: translateY(-1px) scale(1.1);
+    }
+
+    /* ---- Floating UI ------------------------------------------------ */
+
+    /* Menus float up; their items cascade in one after another */
+    html:not(.reduce-motion) .menu_M3qk4j {
+        animation: sp-pop var(--sp-med) var(--sp-ease-float) both;
+        transform-origin: top left;
+    }
+
+    html:not(.reduce-motion) .menu_M3qk4j .item_M3qk4j {
+        animation: sp-slide-in var(--sp-med) var(--sp-ease) both;
+    }
+
+    html:not(.reduce-motion) .menu_M3qk4j .item_M3qk4j:nth-child(2) {
+        animation-delay: 20ms;
+    }
+
+    html:not(.reduce-motion) .menu_M3qk4j .item_M3qk4j:nth-child(3) {
+        animation-delay: 40ms;
+    }
+
+    html:not(.reduce-motion) .menu_M3qk4j .item_M3qk4j:nth-child(4) {
+        animation-delay: 60ms;
+    }
+
+    html:not(.reduce-motion) .menu_M3qk4j .item_M3qk4j:nth-child(5) {
+        animation-delay: 80ms;
+    }
+
+    html:not(.reduce-motion) .menu_M3qk4j .item_M3qk4j:nth-child(6) {
+        animation-delay: 100ms;
+    }
+
+    html:not(.reduce-motion) .menu_M3qk4j .item_M3qk4j:nth-child(n+7) {
+        animation-delay: 120ms;
+    }
+
+    html:not(.reduce-motion) .tooltip_3_v8qp {
+        animation: sp-pop var(--sp-fast) var(--sp-ease-float) backwards;
+    }
+
+    /* Profile popouts and modals drift up out of a soft blur */
+    html:not(.reduce-motion) :is(.outer_P1YEjQ, .root__KoJTP) {
+        animation: sp-float-in var(--sp-slow) var(--sp-ease-float) backwards;
+    }
+
+    /* ---- Controls --------------------------------------------------- */
+
+    html:not(.reduce-motion) .inputDefault_cZux1n:focus {
+        animation: sp-ring var(--sp-med) var(--sp-ease) both;
+    }
+
+    /* Settings: the tab list cascades in */
+    html:not(.reduce-motion) .side_6zZYhF>* {
+        animation: sp-slide-in var(--sp-slow) var(--sp-ease-float) backwards;
+    }
+
+    html:not(.reduce-motion) .side_6zZYhF> :nth-child(2) {
+        animation-delay: 15ms;
+    }
+
+    html:not(.reduce-motion) .side_6zZYhF> :nth-child(3) {
+        animation-delay: 30ms;
+    }
+
+    html:not(.reduce-motion) .side_6zZYhF> :nth-child(4) {
+        animation-delay: 45ms;
+    }
+
+    html:not(.reduce-motion) .side_6zZYhF> :nth-child(5) {
+        animation-delay: 60ms;
+    }
+
+    html:not(.reduce-motion) .side_6zZYhF> :nth-child(6) {
+        animation-delay: 75ms;
+    }
+
+    html:not(.reduce-motion) .side_6zZYhF> :nth-child(7) {
+        animation-delay: 90ms;
+    }
+
+    html:not(.reduce-motion) .side_6zZYhF> :nth-child(8) {
+        animation-delay: 105ms;
+    }
+
+    html:not(.reduce-motion) .side_6zZYhF> :nth-child(9) {
+        animation-delay: 120ms;
+    }
+
+    html:not(.reduce-motion) .side_6zZYhF> :nth-child(10) {
+        animation-delay: 135ms;
+    }
+
+    html:not(.reduce-motion) .side_6zZYhF> :nth-child(n+11) {
+        animation-delay: 150ms;
+    }
+}
+
+/* Reduce motion: also drop the hover movement */
+@media (prefers-reduced-motion: reduce) {
+
+    .blobContainer_IaPwK5:hover,
+    [data-list-item-id^="channels___"]:hover,
+    .container_J1Adu_:hover,
+    .reaction_MmKct8:hover,
+    .embedFull_XyW1ZT:hover,
+    .button_9OQtot:not(:disabled):hover,
+    .side_6zZYhF .item_6zZYhF:hover,
+    .message_SY_P2T:hover .avatar_2i8Bfm,
+    .channelTextArea_2x8-Qn .button_2x8-Qn:hover,
+    .channelTextArea_2x8-Qn:focus-within .scrollableContainer_2x8-Qn {
+        transform: none;
+    }
+}
+
+html.reduce-motion :is(.blobContainer_IaPwK5, [data-list-item-id^="channels___"], .container_J1Adu_, .reaction_MmKct8, .embedFull_XyW1ZT, .button_9OQtot:not(:disabled), .side_6zZYhF .item_6zZYhF, .channelTextArea_2x8-Qn .button_2x8-Qn):hover,
+html.reduce-motion .message_SY_P2T:hover .avatar_2i8Bfm,
+html.reduce-motion .channelTextArea_2x8-Qn:focus-within .scrollableContainer_2x8-Qn {
+    transform: none;
+}
